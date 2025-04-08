@@ -1,4 +1,4 @@
-# MCP Bridge
+# MCP Bridge API
 
 ## A Lightweight, LLM-Agnostic RESTful Proxy for Model Context Protocol Servers
 
