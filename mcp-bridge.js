@@ -159,9 +159,20 @@ async function startServer(serverId, config) {
       
       console.log(`Spawning process with command: ${actualCommand} and args:`, actualArgs);
       
+      // Combine environment variables
+      const envVars = { ...process.env };
+      
+      // Add custom environment variables if provided
+      if (config.env && typeof config.env === 'object') {
+        console.log(`Adding environment variables for ${serverId}:`, config.env);
+        Object.assign(envVars, config.env);
+      } else {
+        console.log(`No custom environment variables for ${serverId}`);
+      }
+      
       // Spawn the server process with shell option for better compatibility
       const serverProcess = spawn(actualCommand, actualArgs, {
-        env: { ...process.env, ...config.env },
+        env: envVars,
         stdio: 'pipe',
         shell: !isWindowsCmd // Use shell only if not handling Windows .cmd specially
       });
