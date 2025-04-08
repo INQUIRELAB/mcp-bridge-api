@@ -15,23 +15,6 @@ MCP Bridge is a lightweight, fast, and LLM-agnostic proxy that connects to multi
 - Direct MCP server connections are impractical in resource-constrained environments
 - Multiple isolated clients connecting to the same servers causes redundancy and increases resource usage
 
-### ✅ Our Solution vs. Other Approaches
-
-While other projects like [rakesh-eltropy/mcp-client](https://github.com/rakesh-eltropy/mcp-client) have attempted to integrate MCP servers with REST APIs, our approach is fundamentally different:
-
-- **LLM Independence** 🧠: MCP Bridge is completely decoupled from any specific LLM API or provider, future-proofing it against changes in LLM architectures  
-- **Pure Bridge Architecture** 🧩: We focus exclusively on the protocol bridging layer, without tying to specific LLM integrations like LangChain  
-- **Lightweight Design** ⚡: Built for minimal resource consumption and maximum performance  
-- **Unified Connection Pool** 🌐: All clients share a single pool of server connections, dramatically reducing resource usage  
-- **Transport Protocol Abstraction** 🔌: Handles multiple transport types (STDIO, SSE) transparently to client applications  
-
-## ✨ Features
-
-- **Multiple Server Management** 🧵  
-- **Protocol Translation** 🔁  
-- **Server Discovery** 🔍  
-- **Authentication** 🔐  
-
 ## 🏗️ Architecture
 
 ```
@@ -147,9 +130,17 @@ Content-Type: application/json
 }
 ```
 
-## 🧠 Use Cases
+### ✅ Our Solution vs. Other Approaches
 
-- **🛡️ LLM-Agnostic Integration** – Stay flexible across evolving LLM stacks. MCP Bridge supports any LLM without being tied to vendor-specific APIs or SDKs.
+While other projects like [rakesh-eltropy/mcp-client](https://github.com/rakesh-eltropy/mcp-client) have attempted to integrate MCP servers with REST APIs, our approach is fundamentally different:
+
+- **LLM Independence** 🧠: MCP Bridge is completely decoupled from any specific LLM API or provider, future-proofing it against changes in LLM architectures  
+- **Pure Bridge Architecture** 🧩: We focus exclusively on the protocol bridging layer, without tying to specific LLM integrations like LangChain  
+- **Lightweight Design** ⚡: Built for minimal resource consumption and maximum performance  
+- **Unified Connection Pool** 🌐: All clients share a single pool of server connections, dramatically reducing resource usage  
+- **Transport Protocol Abstraction** 🔌: Handles multiple transport types (STDIO, SSE) transparently to client applications  
+
+## 🧠 Use Cases
 
 - **🧱 Edge Devices** – Connect lightweight hardware such as smart home hubs, IoT sensors, or embedded devices to MCP-compatible tools without running local inference. MCP Bridge allows these constrained devices to issue requests (e.g., natural language commands, sensor queries) and receive LLM-generated responses via REST — ideal for use cases like smart thermostats, voice-controlled appliances, or environmental monitoring.
 
