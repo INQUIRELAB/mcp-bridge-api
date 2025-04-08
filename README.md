@@ -127,38 +127,6 @@ Content-Type: application/json
 }
 ```
 
-### ✅ Our Solution vs. Other Approaches
-
-While other projects like [rakesh-eltropy/mcp-client](https://github.com/rakesh-eltropy/mcp-client) have attempted to integrate MCP servers with REST APIs, our approach is fundamentally different:
-
-- **LLM Independence** 🧠: MCP Bridge is completely decoupled from any specific LLM API or provider, future-proofing it against changes in LLM architectures  
-- **Pure Bridge Architecture** 🧩: We focus exclusively on the protocol bridging layer, without tying to specific LLM integrations like LangChain  
-- **Lightweight Design** ⚡: Built for minimal resource consumption and maximum performance  
-- **Unified Connection Pool** 🌐: All clients share a single pool of server connections, dramatically reducing resource usage  
-- **Transport Protocol Abstraction** 🔌: Handles multiple transport types (STDIO, SSE) transparently to client applications  
-
-## 🧠 Use Cases
-
-- **🧱 Edge Devices** – Connect lightweight hardware such as smart home hubs, IoT sensors, or embedded devices to MCP-compatible tools without running local inference. MCP Bridge allows these constrained devices to issue requests (e.g., natural language commands, sensor queries) and receive LLM-generated responses via REST — ideal for use cases like smart thermostats, voice-controlled appliances, or environmental monitoring.
-
-- **📱 Mobile Applications** – Offload heavy server processing while retaining full MCP capability. Ideal for mobile apps that need to interact with LLMs or perform complex operations without bundling or executing large models locally.
-
-- **🌐 Web Applications** – Access MCP servers without spawning them client-side. This enables LLM-augmented functionality (e.g., summarization, code explanation) in browser-based tools, dashboards, or CMS platforms.
-
-## 🚧 Deployment Considerations
-
-### 🔒 Security
-
-- Use HTTPS in production
-- Add auth for sensitive operations
-- Network-isolate critical services
-
-### 📊 Scaling
-
-- Use load balancers
-- Pool high-demand servers
-- Track metrics and resource pressure
-
 ### 🔐 Risk Levels
 
 MCP Bridge implements an optional risk level system that provides control over server execution behaviors. Risk levels help manage security and resource concerns when executing potentially sensitive MCP server operations.
@@ -192,19 +160,6 @@ Risk levels are optional for backward compatibility. You can configure risk leve
       },
       "riskLevel": 1
     },
-    "github": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-github"],
-      "env": {
-        "GITHUB_TOKEN": "your-github-token"
-      },
-      "riskLevel": 3,
-      "docker": {
-        "image": "node:18",
-        "volumes": ["/tmp:/tmp"],
-        "network": "host"
-      }
-    }
   }
 }
 ```
@@ -274,6 +229,38 @@ Risk levels are completely optional. If you don't specify a risk level:
 - No confirmation workflow is triggered
 - No Docker execution is required
 - API responses don't include risk level information
+
+### ✅ Our Solution vs. Other Approaches
+
+While other projects like [rakesh-eltropy/mcp-client](https://github.com/rakesh-eltropy/mcp-client) have attempted to integrate MCP servers with REST APIs, our approach is fundamentally different:
+
+- **LLM Independence** 🧠: MCP Bridge is completely decoupled from any specific LLM API or provider, future-proofing it against changes in LLM architectures  
+- **Pure Bridge Architecture** 🧩: We focus exclusively on the protocol bridging layer, without tying to specific LLM integrations like LangChain  
+- **Lightweight Design** ⚡: Built for minimal resource consumption and maximum performance  
+- **Unified Connection Pool** 🌐: All clients share a single pool of server connections, dramatically reducing resource usage  
+- **Transport Protocol Abstraction** 🔌: Handles multiple transport types (STDIO, SSE) transparently to client applications  
+
+## 🧠 Use Cases
+
+- **🧱 Edge Devices** – Connect lightweight hardware such as smart home hubs, IoT sensors, or embedded devices to MCP-compatible tools without running local inference. MCP Bridge allows these constrained devices to issue requests (e.g., natural language commands, sensor queries) and receive LLM-generated responses via REST — ideal for use cases like smart thermostats, voice-controlled appliances, or environmental monitoring.
+
+- **📱 Mobile Applications** – Offload heavy server processing while retaining full MCP capability. Ideal for mobile apps that need to interact with LLMs or perform complex operations without bundling or executing large models locally.
+
+- **🌐 Web Applications** – Access MCP servers without spawning them client-side. This enables LLM-augmented functionality (e.g., summarization, code explanation) in browser-based tools, dashboards, or CMS platforms.
+
+## 🚧 Deployment Considerations
+
+### 🔒 Security
+
+- Use HTTPS in production
+- Add auth for sensitive operations
+- Network-isolate critical services
+
+### 📊 Scaling
+
+- Use load balancers
+- Pool high-demand servers
+- Track metrics and resource pressure
 
 This ensures full compatibility with standard MCP clients that aren't aware of the risk level feature.
 
