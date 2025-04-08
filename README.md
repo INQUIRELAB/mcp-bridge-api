@@ -2,6 +2,10 @@
 
 ## A Lightweight, LLM-Agnostic RESTful Proxy for Model Context Protocol Servers
 
+**Authors:**  
+[Arash Ahmadi](https://github.com/Arash-san), [Sarah S. Sharif](https://www.ou.edu/coe/ece/faculty_directory/safura-sharifi), [Yaser M. Banad](https://www.ou.edu/coe/ece/faculty_directory/banad_mike)  
+School of Electrical, and Computer Engineering, University of Oklahoma, Oklahoma, United States  
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 ## 📚 Introduction
@@ -159,7 +163,7 @@ Risk levels are optional for backward compatibility. You can configure risk leve
         "SLACK_TEAM_ID": "your-team-id"
       },
       "riskLevel": 1
-    },
+    }
   }
 }
 ```
@@ -230,6 +234,8 @@ Risk levels are completely optional. If you don't specify a risk level:
 - No Docker execution is required
 - API responses don't include risk level information
 
+This ensures full compatibility with standard MCP clients that aren't aware of the risk level feature.
+
 ### ✅ Our Solution vs. Other Approaches
 
 While other projects like [rakesh-eltropy/mcp-client](https://github.com/rakesh-eltropy/mcp-client) have attempted to integrate MCP servers with REST APIs, our approach is fundamentally different:
@@ -261,8 +267,6 @@ While other projects like [rakesh-eltropy/mcp-client](https://github.com/rakesh-
 - Use load balancers
 - Pool high-demand servers
 - Track metrics and resource pressure
-
-This ensures full compatibility with standard MCP clients that aren't aware of the risk level feature.
 
 ## 📄 License
 
