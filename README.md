@@ -149,10 +149,13 @@ Content-Type: application/json
 
 ## 🧠 Use Cases
 
-- **📱 Mobile Applications** – Offload heavy server processing while retaining full MCP capability  
-- **🌐 Web Applications** – Access MCP servers without spawning them client-side  
-- **👥 Multi-User Environments** – Shared resource pools optimize load  
-- **🛡️ LLM-Agnostic Integration** – Stay flexible across evolving LLM stacks  
+- **🛡️ LLM-Agnostic Integration** – Stay flexible across evolving LLM stacks. MCP Bridge supports any LLM without being tied to vendor-specific APIs or SDKs.
+
+- **🧱 Edge Devices** – Connect lightweight hardware such as smart home hubs, IoT sensors, or embedded devices to MCP-compatible tools without running local inference. MCP Bridge allows these constrained devices to issue requests (e.g., natural language commands, sensor queries) and receive LLM-generated responses via REST — ideal for use cases like smart thermostats, voice-controlled appliances, or environmental monitoring.
+
+- **📱 Mobile Applications** – Offload heavy server processing while retaining full MCP capability. Ideal for mobile apps that need to interact with LLMs or perform complex operations without bundling or executing large models locally.
+
+- **🌐 Web Applications** – Access MCP servers without spawning them client-side. This enables LLM-augmented functionality (e.g., summarization, code explanation) in browser-based tools, dashboards, or CMS platforms.
 
 ## 🚧 Deployment Considerations
 
