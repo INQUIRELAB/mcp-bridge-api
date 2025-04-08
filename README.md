@@ -86,12 +86,6 @@ MCP Bridge is configured through a JSON file named `mcp_config.json` in the proj
 }
 ```
 
-You can also configure using environment variables:
-- `MCP_CONFIG_PATH`: Path to a custom config file location
-- `MCP_SERVER_NAME_COMMAND`: Command to run server (e.g., `MCP_SERVER_FILESYSTEM_COMMAND=npx`)
-- `MCP_SERVER_NAME_ARGS`: Comma-separated list of arguments
-- `MCP_SERVER_NAME_ENV`: JSON-formatted environment variables
-
 ## 🧪 API Usage
 
 MCP Bridge exposes a clean and intuitive REST API for interacting with connected servers. Here's a breakdown of available endpoints:
