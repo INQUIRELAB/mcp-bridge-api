@@ -218,10 +218,9 @@ Content-Type: application/json
   "size": 123
 }
 ```
-
 ##### High Risk (Level 3)
 - Requires Docker configuration
-- Automatically runs the server in an isolated Docker container
+- Automatically launches the server inside an isolated Docker container if it isn't already running in one
 - Responses include Docker execution information
 - Provides stronger isolation for potentially dangerous operations
 
