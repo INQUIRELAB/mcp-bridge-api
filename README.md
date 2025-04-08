@@ -65,7 +65,7 @@ node mcp-bridge.js
 
 ## ⚙️ Configuration
 
-MCP Bridge is configured through a JSON file named `mcp_config.json` in the project root:
+MCP Bridge is configured through a JSON file named `mcp_config.json` in the project root. This is an example of a MCP config:
 
 ```json
 {
