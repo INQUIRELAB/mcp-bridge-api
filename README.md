@@ -6,7 +6,7 @@
 
 ## 📚 Introduction
 
-MCP Bridge is a lightweight, fast, and LLM-agnostic proxy that connects to multiple Model Context Protocol (MCP) servers and exposes their capabilities through a unified REST API. It enables any client on any platform to leverage MCP functionality without process execution constraints. Unlike Anthropic’s official MCP SDK, MCP Bridge is fully independent and designed to work with any LLM backend which makes it adaptable, modular, and future-proof for diverse deployments.
+MCP Bridge is a lightweight, fast, and LLM-agnostic proxy that connects to multiple Model Context Protocol (MCP) servers and exposes their capabilities through a unified REST API. It enables any client on any platform to leverage MCP functionality without process execution constraints. Unlike Anthropic's official MCP SDK, MCP Bridge is fully independent and designed to work with any LLM backend which makes it adaptable, modular, and future-proof for diverse deployments. MCP Bridge also features optional risk-based execution levels that provide granular security controls—from standard execution to confirmation workflows and Docker isolation—all while maintaining backward compatibility with standard MCP clients.
 
 ### ⚠️ The Problem
 
@@ -65,7 +65,7 @@ node mcp-bridge.js
 
 ## ⚙️ Configuration
 
-MCP Bridge is configured through a JSON file named `mcp_config.json` in the project root. This is an example of a MCP config:
+MCP Bridge is configured through a JSON file named `mcp_config.json` in the project root. This is an example of a basic MCP config:
 
 ```json
 {
@@ -86,6 +86,8 @@ MCP Bridge is configured through a JSON file named `mcp_config.json` in the proj
 }
 ```
 
+For enhanced security and execution control, you can configure optional risk levels for each server. See the [Risk Levels](#-risk-levels) section for detailed information and configuration examples.
+
 ## 🧪 API Usage
 
 MCP Bridge exposes a clean and intuitive REST API for interacting with connected servers. Here's a breakdown of available endpoints:
@@ -99,6 +101,7 @@ MCP Bridge exposes a clean and intuitive REST API for interacting with connected
 | `/servers/{serverId}` | DELETE | Stop and remove an MCP server |
 | `/health` | GET | Get health status of the MCP Bridge |
 | `/tools/{toolName}` | POST | Execute a tool on the first available server |
+| `/confirmations/{confirmationId}` | POST | Confirm execution of a medium risk level request |
 
 ### 📌 Server-Specific Endpoints
 
@@ -155,6 +158,124 @@ While other projects like [rakesh-eltropy/mcp-client](https://github.com/rakesh-
 - Use load balancers
 - Pool high-demand servers
 - Track metrics and resource pressure
+
+### 🔐 Risk Levels
+
+MCP Bridge implements an optional risk level system that provides control over server execution behaviors. Risk levels help manage security and resource concerns when executing potentially sensitive MCP server operations.
+
+#### Risk Level Classification
+
+| Level | Name | Description | Behavior |
+|-------|------|-------------|----------|
+| 1 | Low | Standard execution | Direct execution without confirmation |
+| 2 | Medium | Requires confirmation | Client must confirm execution before processing |
+| 3 | High | Docker execution required | Server runs in isolated Docker container |
+
+#### Configuring Risk Levels
+
+Risk levels are optional for backward compatibility. You can configure risk levels in your `mcp_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/path/to/directory"],
+      "riskLevel": 2
+    },
+    "slack": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-slack"],
+      "env": {
+        "SLACK_BOT_TOKEN": "your-slack-token",
+        "SLACK_TEAM_ID": "your-team-id"
+      },
+      "riskLevel": 1
+    },
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_TOKEN": "your-github-token"
+      },
+      "riskLevel": 3,
+      "docker": {
+        "image": "node:18",
+        "volumes": ["/tmp:/tmp"],
+        "network": "host"
+      }
+    }
+  }
+}
+```
+
+#### Risk Level Workflows
+
+##### Low Risk (Level 1)
+- Standard execution without additional steps
+- Suitable for operations with minimal security concerns
+- This is the default behavior when no risk level is specified
+
+##### Medium Risk (Level 2)
+1. Client makes a tool execution request
+2. Server responds with a confirmation request containing a confirmation ID
+3. Client must make a separate confirmation request to proceed
+4. Only after confirmation does the server execute the operation
+
+Example confirmation flow:
+
+```http
+# 1. Initial request
+POST /servers/filesystem/tools/read-file
+Content-Type: application/json
+
+{
+  "path": "/some/file.txt"
+}
+
+# 2. Server response requiring confirmation
+{
+  "requires_confirmation": true,
+  "confirmation_id": "abc123-uuid-here",
+  "risk_level": 2,
+  "risk_description": "Medium risk - Requires confirmation",
+  "server_id": "filesystem",
+  "method": "tools/call", 
+  "tool_name": "read-file",
+  "expires_at": "2023-07-01T12:34:56.789Z"
+}
+
+# 3. Confirmation request
+POST /confirmations/abc123-uuid-here
+Content-Type: application/json
+
+{
+  "confirm": true
+}
+
+# 4. Server executes request and returns result
+{
+  "content": "Contents of the file...",
+  "size": 123
+}
+```
+
+##### High Risk (Level 3)
+- Requires Docker configuration
+- Automatically runs the server in an isolated Docker container
+- Responses include Docker execution information
+- Provides stronger isolation for potentially dangerous operations
+
+#### Backward Compatibility
+
+Risk levels are completely optional. If you don't specify a risk level:
+
+- Servers operate in standard mode (equivalent to level 1)
+- No confirmation workflow is triggered
+- No Docker execution is required
+- API responses don't include risk level information
+
+This ensures full compatibility with standard MCP clients that aren't aware of the risk level feature.
 
 ## 📄 License
 
