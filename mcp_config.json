@@ -1,0 +1,23 @@
+{
+    "mcpServers": {
+      "filesystem": {
+        "command": "npx",
+        "args": [
+          "-y",
+          "@modelcontextprotocol/server-filesystem",
+          "D:\\claude-test"
+        ]
+      },
+      "slack": {
+        "command": "npx",
+        "args": [
+          "-y",
+          "@modelcontextprotocol/server-slack"
+        ],
+        "env": {
+          "SLACK_BOT_TOKEN": "xoxb-5362213740582-8610800813104-OzFhEN6KVypEKJEhgd27WXUj",
+          "SLACK_TEAM_ID": "T05AN69MSH4"
+        }
+      }
+    }
+  }
