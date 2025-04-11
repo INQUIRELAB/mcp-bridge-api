@@ -226,19 +226,6 @@ Risk levels are optional for backward compatibility. You can configure risk leve
         "SLACK_TEAM_ID": "your-team-id"
       },
       "riskLevel": 1
-    },
-    "github": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-github"],
-      "env": {
-        "GITHUB_TOKEN": "your-github-token"
-      },
-      "riskLevel": 3,
-      "docker": {
-        "image": "node:18",
-        "volumes": ["/tmp:/tmp"],
-        "network": "host"
-      }
     }
   }
 }
