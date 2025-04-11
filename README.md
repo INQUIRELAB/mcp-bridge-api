@@ -1,6 +1,6 @@
 # MCP Bridge API
 
-## A Lightweight, LLM-Agnostic RESTful Proxy for Model Context Protocol Servers with Gemini Integration
+## A Lightweight, LLM-Agnostic RESTful Proxy for Model Context Protocol Servers
 
 **Authors:**  
 Arash Ahmadi, Sarah S. Sharif, and Yaser M. Banad*  
