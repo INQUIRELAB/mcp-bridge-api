@@ -3,7 +3,7 @@
 ## A Lightweight, LLM-Agnostic RESTful Proxy for Model Context Protocol Servers
 
 **Authors:**  
-Arash Ahmadi, Sarah S. Sharif, and Yaser M. Banad*  
+[Arash Ahmadi](https://github.com/Arash-san), [Sarah S. Sharif](https://www.ou.edu/coe/ece/faculty_directory/safura-sharifi), and [Yaser M. Banad](https://www.ou.edu/coe/ece/faculty_directory/banad_mike)*  
 School of Electrical, and Computer Engineering, University of Oklahoma, Oklahoma, United States  
 *Corresponding author: bana@ou.edu
 
