@@ -9,6 +9,32 @@ School of Electrical, and Computer Engineering, University of Oklahoma, Oklahoma
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
+## 📑 Table of Contents
+
+- [Introduction](#-introduction)
+- [The Problem](#️-the-problem)
+- [Architecture](#️-architecture)
+- [Installation](#-installation)
+  - [Prerequisites](#-prerequisites)
+  - [Quick Setup](#-quick-setup)
+- [Configuration](#️-configuration)
+  - [MCP Bridge Configuration](#mcp-bridge-configuration)
+  - [MCP-Gemini Agent Configuration](#mcp-gemini-agent-configuration)
+- [API Usage](#-api-usage)
+  - [General Endpoints](#-general-endpoints)
+  - [Server-Specific Endpoints](#-server-specific-endpoints)
+- [Example Requests](#-example-requests)
+- [MCP-Gemini Agent Features](#-mcp-gemini-agent-features)
+- [Risk Levels](#-risk-levels)
+  - [Risk Level Classification](#risk-level-classification)
+  - [Configuring Risk Levels](#configuring-risk-levels)
+  - [Risk Level Workflows](#risk-level-workflows)
+- [Deployment Considerations](#-deployment-considerations)
+  - [Security](#-security)
+  - [Scaling](#-scaling)
+- [Comparison with Other MCP Bridge/Proxy Repositories](#-comparison-with-other-mcp-bridgeproxy-repositories)
+- [License](#-license)
+
 ## 📚 Introduction
 
 MCP Bridge is a lightweight, fast, and LLM-agnostic proxy that connects to multiple Model Context Protocol (MCP) servers and exposes their capabilities through a unified REST API. It enables any client on any platform to leverage MCP functionality without process execution constraints. Unlike Anthropic's official MCP SDK, MCP Bridge is fully independent and designed to work with any LLM backend which makes it adaptable, modular, and future-proof for diverse deployments. With optional risk-based execution levels, it provides granular security controls—from standard execution to confirmation workflows and Docker isolation—while maintaining backward compatibility with standard MCP clients. Complementing this server-side infrastructure is the MCP-Gemini Agent, a Python client that integrates Google's Gemini API with MCP Bridge. This agent enables natural language interaction with MCP tools through an intelligent LLM-powered interface that features multi-step reasoning for complex operations, security confirmation workflow handling, and configurable display options for enhanced usability. Together, MCP Bridge's versatile server-side capabilities and the Gemini Agent's intelligent client interface create a powerful ecosystem for developing sophisticated LLM-powered applications.
@@ -265,7 +291,27 @@ The MCP-Gemini Agent handles this confirmation flow automatically, prompting the
 - Pool high-demand servers
 - Track metrics and resource pressure
 
+## 📊 Comparison with Other MCP Bridge/Proxy Repositories
+
+| Feature                  | [`ivanboring/mcp-rest`](https://github.com/ivanboring/mcp-rest) | [`INQUIRELAB/mcp-bridge-api`](https://github.com/INQUIRELAB/mcp-bridge-api) (This Repo) | [`SecretiveShell/MCP-Bridge`](https://github.com/SecretiveShell/MCP-Bridge) | [`JoshuaRileyDev/mcp-api`](https://github.com/JoshuaRileyDev/mcp-api) | [`rakesh-eltropy/mcp-client`](https://github.com/rakesh-eltropy/mcp-client) | [`bartolli/mcp-llm-bridge`](https://github.com/bartolli/mcp-llm-bridge) |
+| :----------------------- | :--------------------------------------------------------------- | :---------------------------------------------------------------------------------- | :---------------------------------------------------------------------- | :----------------------------------------------------------------- | :------------------------------------------------------------------------ | :---------------------------------------------------------------------- |
+| ⚙️ **Primary Language**  | Node.js                                                          | **Node.js (Bridge) + Python (Agent) ✨**                                              | Python                                                                  | Node.js                                                                | Python                                                                    | Python                                                                  |
+| 🎯 **Main Purpose**      | Simple REST wrapper                                              | **LLM-Agnostic REST Bridge + Gemini Agent**                                    | Feature-rich OpenAI & REST Bridge + MCP Server                          | REST API for MCP Servers + Chat UI Example                             | LangChain Agent w/ MCP Tools (REST/CLI)                                 | MCP <-> LLM Bridge (OpenAI compatible)                                |
+| 🔌 **MCP Connection**   | SSE only                                                         | **STDIO (Managed) + Docker (Risk-based) ✔️**                                        | STDIO, SSE, Docker                                                      | STDIO                                                                  | STDIO (LangChain)                                                       | STDIO                                                                   |
+| 🚀 **API Interface**     | Basic REST                                                       | **Unified REST API ✔️**                                                             | OpenAI compatible, REST, MCP Server (SSE)                               | REST API + Swagger                                                     | REST API (Streaming), CLI                                                 | Interactive CLI                                                         |
+| ✨ **Key Features**       | Basic tool list/call                                           | **Multi-server, Risk Levels, Security Confirm, Docker Exec, Gemini Agent, Config Flexibility ✨** | OpenAI compat., Sampling, Multi-transport, Auth, Docker/Helm, Flexible Config | Multi-server, Tool Name Norm., Swagger, Chat UI                        | LangChain Integration, REST/CLI, Streaming                              | Bidirectional Protocol Translation, DB Tool                             |
+| 🔧 **Configuration**     | CLI args                                                         | **JSON file + Env Vars ✔️**                                                         | JSON file, HTTP URL, Env Vars                                           | JSON file (multi-path search), Env Vars                                | JSON file                                                                 | Python Object, Env Vars                                                 |
+| 🧩 **LLM Integration**   | None                                                             | **Yes (Dedicated Gemini Agent w/ Multi-Step Reasoning) ✨**                           | Yes (OpenAI endpoint)                                                 | None (API only)                                                        | Yes (LangChain)                                                           | Yes (OpenAI client)                                                   |                                                          |
+| 🏗️ **Complexity**       | Low                                                         | **Low ✔️**                                                          | High                                                                    | Moderate                                                               | Moderate-High                                                             | Moderate                                                                |
+| 🛡️ **Security Features** | None                                                             | **Risk Levels (Medium/High) + Confirmation Flow + Docker Isolation ✨**               | Basic Auth (API Keys), CORS                                             | None                                                                   | None                                                                      | None                                                                    |
+| 📦 **Key Dependencies**  | `express`, `mcp-client`                                        | `express`, `uuid` (Bridge, minimum dependency); `requests`, `google-genai`, `rich` (Agent)            | `fastapi`, `mcp`, `mcpx`                                                  | `express`, `@mcp/sdk`, `socket.io`                                     | `fastapi`, `mcp`, `langchain`, `langgraph`                              | `mcp`, `openai`, `pydantic`                                             |
+| 🤝 **Architecture**      | Simple Facade                                                    | **Decoupled Bridge + Agent ✨**                                                     | Monolithic Bridge/Server                                                | REST API Server                                                        | LangChain Agent App                                                       | CLI Bridge Application                                                  |
+
+**Icon Key:**
+
+*   ✨ : Unique or particularly strong advantage of `INQUIRELAB/mcp-bridge-api`.
+*   ✔️ : Feature present and well-implemented, often comparable or slightly advantageous compared to simpler implementations.
+
 ## 📝 License
 
 MIT License
-
