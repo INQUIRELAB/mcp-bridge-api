@@ -9,10 +9,20 @@ School of Electrical, and Computer Engineering, University of Oklahoma, Oklahoma
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
+## 📚 Introduction
+
+MCP Bridge is a lightweight, fast, and LLM-agnostic proxy that connects to multiple Model Context Protocol (MCP) servers and exposes their capabilities through a unified REST API. It enables any client on any platform to leverage MCP functionality without process execution constraints. Unlike Anthropic's official MCP SDK, MCP Bridge is fully independent and designed to work with any LLM backend which makes it adaptable, modular, and future-proof for diverse deployments. With optional risk-based execution levels, it provides granular security controls—from standard execution to confirmation workflows and Docker isolation—while maintaining backward compatibility with standard MCP clients. Complementing this server-side infrastructure is the MCP-Gemini Agent, a Python client that integrates Google's Gemini API with MCP Bridge. This agent enables natural language interaction with MCP tools through an intelligent LLM-powered interface that features multi-step reasoning for complex operations, security confirmation workflow handling, and configurable display options for enhanced usability. Together, MCP Bridge's versatile server-side capabilities and the Gemini Agent's intelligent client interface create a powerful ecosystem for developing sophisticated LLM-powered applications.
+
+### ⚠️ The Problem
+
+- Many MCP servers use STDIO transports requiring local process execution
+- Edge devices, mobile devices, web browsers, and other platforms cannot efficiently run npm or Python MCP servers
+- Direct MCP server connections are impractical in resource-constrained environments
+- Multiple isolated clients connecting to the same servers causes redundancy and increases resource usage
+- Interacting directly with MCP tools requires technical knowledge of specific tool formats and requirements
+
 ## 📑 Table of Contents
 
-- [Introduction](#-introduction)
-- [The Problem](#️-the-problem)
 - [Architecture](#️-architecture)
 - [Installation](#-installation)
   - [Prerequisites](#-prerequisites)
@@ -34,18 +44,6 @@ School of Electrical, and Computer Engineering, University of Oklahoma, Oklahoma
   - [Scaling](#-scaling)
 - [Comparison with Other MCP Bridge/Proxy Repositories](#-comparison-with-other-mcp-bridgeproxy-repositories)
 - [License](#-license)
-
-## 📚 Introduction
-
-MCP Bridge is a lightweight, fast, and LLM-agnostic proxy that connects to multiple Model Context Protocol (MCP) servers and exposes their capabilities through a unified REST API. It enables any client on any platform to leverage MCP functionality without process execution constraints. Unlike Anthropic's official MCP SDK, MCP Bridge is fully independent and designed to work with any LLM backend which makes it adaptable, modular, and future-proof for diverse deployments. With optional risk-based execution levels, it provides granular security controls—from standard execution to confirmation workflows and Docker isolation—while maintaining backward compatibility with standard MCP clients. Complementing this server-side infrastructure is the MCP-Gemini Agent, a Python client that integrates Google's Gemini API with MCP Bridge. This agent enables natural language interaction with MCP tools through an intelligent LLM-powered interface that features multi-step reasoning for complex operations, security confirmation workflow handling, and configurable display options for enhanced usability. Together, MCP Bridge's versatile server-side capabilities and the Gemini Agent's intelligent client interface create a powerful ecosystem for developing sophisticated LLM-powered applications.
-
-### ⚠️ The Problem
-
-- Many MCP servers use STDIO transports requiring local process execution
-- Edge devices, mobile devices, web browsers, and other platforms cannot efficiently run npm or Python MCP servers
-- Direct MCP server connections are impractical in resource-constrained environments
-- Multiple isolated clients connecting to the same servers causes redundancy and increases resource usage
-- Interacting directly with MCP tools requires technical knowledge of specific tool formats and requirements
 
 ## 🏗️ Architecture
 
