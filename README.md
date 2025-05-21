@@ -9,6 +9,17 @@ School of Electrical, and Computer Engineering, University of Oklahoma, Oklahoma
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
+If you want to reference this research project in your work, please cite our paper:
+
+```
+@article{ahmadi2025mcp,
+  title={MCP Bridge: A Lightweight, LLM-Agnostic RESTful Proxy for Model Context Protocol Servers},
+  author={Ahmadi, Arash and Sharif, Sarah and Banad, Yaser M},
+  journal={arXiv preprint arXiv:2504.08999},
+  year={2025}
+}
+```
+
 ## 📚 Introduction
 
 MCP Bridge is a lightweight, fast, and LLM-agnostic proxy that connects to multiple Model Context Protocol (MCP) servers and exposes their capabilities through a unified REST API. It enables any client on any platform to leverage MCP functionality without process execution constraints. Unlike Anthropic's official MCP SDK, MCP Bridge is fully independent and designed to work with any LLM backend which makes it adaptable, modular, and future-proof for diverse deployments. With optional risk-based execution levels, it provides granular security controls—from standard execution to confirmation workflows and Docker isolation—while maintaining backward compatibility with standard MCP clients. Complementing this server-side infrastructure is the MCP-Gemini Agent, a Python client that integrates Google's Gemini API with MCP Bridge. This agent enables natural language interaction with MCP tools through an intelligent LLM-powered interface that features multi-step reasoning for complex operations, security confirmation workflow handling, and configurable display options for enhanced usability. Together, MCP Bridge's versatile server-side capabilities and the Gemini Agent's intelligent client interface create a powerful ecosystem for developing sophisticated LLM-powered applications.
