@@ -9,6 +9,9 @@ School of Electrical, and Computer Engineering, University of Oklahoma, Oklahoma
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
+[![arXiv](https://img.shields.io/badge/arXiv-2504.08999-b31b1b.svg)](https://arxiv.org/abs/2504.08999)
+
+
 If you want to reference this research project in your work, please cite our paper:
 
 ```
