@@ -2,12 +2,9 @@
 
 ## A Lightweight, LLM-Agnostic RESTful Proxy for Model Context Protocol Servers
 
-<div style="text-align:center;">
-  <figure>
-    <img src="./screenshot.png" alt="MCP Bridge Mobile Interface" width="650"/>
-    <figcaption><em>Figure: The React Native MCP Agent interface showing the chat screen with tool execution results (left) and the settings screen with MCP Bridge connection status and Gemini API configuration (right)</em></figcaption>
-  </figure>
-</div>
+<img src="./screenshot.png" alt="MCP Bridge Mobile Interface" width="650"/>
+
+*Figure: The React Native MCP Agent interface showing the chat screen with tool execution results (left) and the settings screen with MCP Bridge connection status and Gemini API configuration (right)*
 
 **Authors:**  
 Arash Ahmadi, Sarah S. Sharif, and Yaser M. Banad*  
@@ -193,8 +190,6 @@ The React Native MCP Agent is a modern, cross-platform mobile application that p
 3. **Select Model**: Choose from available Gemini models including the latest releases
 4. **Start Chatting**: Begin natural language conversations with your MCP tools
 
-
-
 The app automatically discovers available MCP tools and provides contextual assistance for complex multi-step operations.
 
 ## ⚙️ Configuration
@@ -261,8 +256,6 @@ Content-Type: application/json
   "path": "."
 }
 ```
-
-
 
 ## 🧪 Client Features
 
@@ -417,7 +410,6 @@ For the React Native app:
 
 *   ✨ : Unique or particularly strong advantage of `INQUIRELAB/mcp-bridge-api`.
 *   ✔️ : Feature present and well-implemented, often comparable or slightly advantageous compared to simpler implementations.
-
 
 ## 📝 License
 
