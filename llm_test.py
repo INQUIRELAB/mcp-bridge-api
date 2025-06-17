@@ -29,7 +29,7 @@ from rich.syntax import Syntax
 
 # Default configuration
 DEFAULT_MCP_BRIDGE_URL = "http://localhost:3000"  # Default URL for MCP Bridge
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "AIzaSyClMnt9e64GpvKoOyWg3vU32txSiChuksA")
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "your-api-key")
 GEMINI_MODEL = "gemini-2.5-pro-preview-05-06"  # Use the appropriate model as needed
 
 console = Console()
