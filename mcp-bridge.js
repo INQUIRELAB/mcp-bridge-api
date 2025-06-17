@@ -45,6 +45,7 @@ console.log('Middleware configured');
 // Server state
 const serverProcesses = new Map(); // Map of server IDs to processes
 const pendingConfirmations = new Map(); // Map of request IDs to pending confirmations
+const serverInitializationState = new Map(); // Track initialization state of servers
 
 // Helper function to load server configuration from file or environment
 function loadServerConfig() {
@@ -304,6 +305,9 @@ async function startServer(serverId, config) {
       
       console.log(`Server process spawned for ${serverId}, PID: ${serverProcess.pid}`);
       
+      // Initialize the server state as 'starting'
+      serverInitializationState.set(serverId, 'starting');
+      
       // Store the server process with its risk level
       serverProcesses.set(serverId, {
         process: serverProcess,
@@ -312,15 +316,99 @@ async function startServer(serverId, config) {
         config
       });
       
-      // Set up communication
-      const setupMCPCommunication = () => {
-        // Send initialize request to the MCP server
+      // Set up initialization handler
+      let initializationTimeout;
+      const initializationHandler = (data) => {
+        try {
+          const responseText = data.toString();
+          const lines = responseText.split('\n').filter(line => line.trim());
+          
+          for (const line of lines) {
+            try {
+              const response = JSON.parse(line);
+              
+              // Check if this is the initialize response
+              if (response.id === 1 && response.result && response.result.protocolVersion) {
+                console.log(`Server ${serverId} initialization completed successfully`);
+                
+                // Mark server as initialized
+                serverInitializationState.set(serverId, 'initialized');
+                
+                // Remove the initialization handler
+                serverProcess.stdout.removeListener('data', initializationHandler);
+                
+                // Clear the timeout
+                if (initializationTimeout) {
+                  clearTimeout(initializationTimeout);
+                }
+                
+                // Send initialized notification to complete the handshake
+                const initializedNotification = {
+                  jsonrpc: "2.0",
+                  method: "notifications/initialized"
+                };
+                
+                serverProcess.stdin.write(JSON.stringify(initializedNotification) + '\n');
+                console.log(`Sent initialized notification to ${serverId}`);
+                
+                // Add regular stdout handler for future messages
+                serverProcess.stdout.on('data', regularStdoutHandler);
+                
+                // Resolve the promise to indicate the server is ready
+                resolve(serverProcess);
+                return;
+              }
+            } catch (parseError) {
+              // Ignore JSON parsing errors during initialization
+              continue;
+            }
+          }
+        } catch (error) {
+          console.error(`Error processing initialization response from ${serverId}:`, error);
+        }
+      };
+      
+      // Set up regular stdout handler for non-initialization messages
+      const regularStdoutHandler = (data) => {
+        console.log(`[${serverId}] STDOUT: ${data.toString().trim()}`);
+      };
+      
+      // Set up stderr handler
+      serverProcess.stderr.on('data', (data) => {
+        console.log(`[${serverId}] STDERR: ${data.toString().trim()}`);
+      });
+      
+      serverProcess.on('error', (error) => {
+        console.error(`[${serverId}] Process error: ${error.message}`);
+        serverInitializationState.set(serverId, 'error');
+        reject(error);
+      });
+      
+      serverProcess.on('close', (code) => {
+        console.log(`[${serverId}] Process exited with code ${code}`);
+        serverProcesses.delete(serverId);
+        serverInitializationState.delete(serverId);
+      });
+      
+      // Add initialization handler first
+      serverProcess.stdout.on('data', initializationHandler);
+      
+      // Set initialization timeout
+      initializationTimeout = setTimeout(() => {
+        console.error(`Server ${serverId} initialization timed out`);
+        serverInitializationState.set(serverId, 'timeout');
+        serverProcess.stdout.removeListener('data', initializationHandler);
+        reject(new Error(`Server ${serverId} initialization timed out`));
+      }, 30000); // 30 second timeout for initialization
+      
+      // Wait a moment for the process to start, then send initialize request
+      setTimeout(() => {
         const initializeRequest = {
           jsonrpc: "2.0",
           id: 1,
           method: "initialize",
           params: {
-            protocolVersion: "0.3.0",
+            protocolVersion: "2025-03-26",
             clientInfo: {
               name: "mcp-bridge",
               version: "1.0.0"
@@ -333,34 +421,11 @@ async function startServer(serverId, config) {
         
         serverProcess.stdin.write(JSON.stringify(initializeRequest) + '\n');
         console.log(`Sent initialize request to ${serverId}`);
-      };
-      
-      // Set up various event listeners
-      serverProcess.stdout.on('data', (data) => {
-        console.log(`[${serverId}] STDOUT: ${data.toString().trim()}`);
-      });
-      
-      serverProcess.stderr.on('data', (data) => {
-        console.log(`[${serverId}] STDERR: ${data.toString().trim()}`);
-      });
-      
-      serverProcess.on('error', (error) => {
-        console.error(`[${serverId}] Process error: ${error.message}`);
-        reject(error);
-      });
-      
-      serverProcess.on('close', (code) => {
-        console.log(`[${serverId}] Process exited with code ${code}`);
-        serverProcesses.delete(serverId);
-      });
-      
-      // Wait a moment for the process to start
-      setTimeout(() => {
-        setupMCPCommunication();
-        resolve(serverProcess);
       }, 1000);
+      
     } catch (error) {
       console.error(`Error starting server ${serverId}:`, error);
+      serverInitializationState.set(serverId, 'error');
       reject(error);
     }
   });
@@ -382,6 +447,9 @@ async function shutdownServer(serverId) {
     serverProcesses.delete(serverId);
   }
   
+  // Clean up initialization state
+  serverInitializationState.delete(serverId);
+  
   console.log(`Server ${serverId} shutdown complete`);
 }
 
@@ -392,6 +460,18 @@ async function sendMCPRequest(serverId, method, params = {}, confirmationId = nu
     
     if (!serverInfo) {
       return reject(new Error(`Server '${serverId}' not found or not connected`));
+    }
+    
+    // Check initialization state
+    const initState = serverInitializationState.get(serverId);
+    if (initState !== 'initialized') {
+      const stateMessage = {
+        'starting': 'Server is still starting up',
+        'timeout': 'Server initialization timed out',
+        'error': 'Server initialization failed'
+      }[initState] || 'Server is not properly initialized';
+      
+      return reject(new Error(`${stateMessage}. Current state: ${initState}`));
     }
     
     const { process: serverProcess, riskLevel, config } = serverInfo;
@@ -438,25 +518,44 @@ async function sendMCPRequest(serverId, method, params = {}, confirmationId = nu
     const messageHandler = (data) => {
       try {
         const responseText = data.toString();
+        // Handle potential multiline responses by properly joining and parsing
+        let parsedResponse = null;
+        let jsonError = null;
+        
+        try {
+          // First try to parse the entire response as a single JSON object
+          parsedResponse = JSON.parse(responseText);
+        } catch (e) {
+          // If that fails, try to split by lines and parse each line
         const lines = responseText.split('\n').filter(line => line.trim());
         
         for (const line of lines) {
           try {
-            const response = JSON.parse(line);
+              const lineResponse = JSON.parse(line);
+              if (lineResponse.id === requestId) {
+                parsedResponse = lineResponse;
+                break;
+              }
+            } catch (lineError) {
+              jsonError = lineError;
+              console.error(`Error parsing JSON line from ${serverId}:`, lineError);
+            }
+          }
+        }
             
-            if (response.id === requestId) {
+        if (parsedResponse && parsedResponse.id === requestId) {
               console.log(`Received response from ${serverId} for request ${requestId}`);
               
               // Remove handler after response is received
               serverProcess.stdout.removeListener('data', messageHandler);
               
-              if (response.error) {
-                return reject(new Error(response.error.message || 'Unknown error'));
+          if (parsedResponse.error) {
+            return reject(new Error(parsedResponse.error.message || 'Unknown error'));
               }
               
               // For high risk level, add information about docker execution (only if risk level is explicitly set)
               if (riskLevel !== undefined && riskLevel === RISK_LEVEL.HIGH) {
-                const result = response.result || {};
+            const result = parsedResponse.result || {};
                 return resolve({
                   ...result,
                   execution_environment: {
@@ -468,14 +567,21 @@ async function sendMCPRequest(serverId, method, params = {}, confirmationId = nu
                 });
               }
               
-              return resolve(response.result);
-            }
-          } catch (parseError) {
-            console.error(`Error parsing JSON response from ${serverId}:`, parseError);
-          }
+          return resolve(parsedResponse.result);
+        } else if (jsonError) {
+          // If we couldn't parse any JSON and have an error, handle it gracefully
+          console.error(`Failed to parse JSON response from ${serverId}`);
+          // Clean up
+          serverProcess.stdout.removeListener('data', messageHandler);
+          
+          // Provide a clean error response
+          return reject(new Error(`Invalid response format from MCP server: ${jsonError.message}`));
         }
       } catch (error) {
         console.error(`Error processing response from ${serverId}:`, error);
+        // Clean up
+        serverProcess.stdout.removeListener('data', messageHandler);
+        return reject(new Error(`Error processing response: ${error.message}`));
       }
     };
     
@@ -489,14 +595,40 @@ async function sendMCPRequest(serverId, method, params = {}, confirmationId = nu
     }, 10000);
     
     // Send the request
-    serverProcess.stdin.write(JSON.stringify(request) + '\n');
-    
-    // Handle error case
-    serverProcess.on('error', (error) => {
+    try {
+      serverProcess.stdin.write(JSON.stringify(request) + '\n');
+    } catch (error) {
       clearTimeout(timeout);
       serverProcess.stdout.removeListener('data', messageHandler);
+      reject(new Error(`Failed to send request to ${serverId}: ${error.message}`));
+      return;
+    }
+    
+    // Handle error case
+    const errorHandler = (error) => {
+      clearTimeout(timeout);
+      serverProcess.stdout.removeListener('data', messageHandler);
+      serverProcess.removeListener('error', errorHandler);
       reject(error);
-    });
+    };
+    
+    serverProcess.once('error', errorHandler);
+    
+    // Clean up error handler when request completes
+    const originalResolve = resolve;
+    const originalReject = reject;
+    
+    resolve = (value) => {
+      clearTimeout(timeout);
+      serverProcess.removeListener('error', errorHandler);
+      originalResolve(value);
+    };
+    
+    reject = (error) => {
+      clearTimeout(timeout);
+      serverProcess.removeListener('error', errorHandler);
+      originalReject(error);
+    };
   });
 }
 
@@ -511,7 +643,8 @@ app.get('/servers', (req, res) => {
     const serverInfo = {
       id,
       connected: true,
-      pid: info.pid
+      pid: info.pid,
+      initialization_state: serverInitializationState.get(id) || 'unknown'
     };
     
     // Only include risk level information if it was explicitly set
@@ -687,10 +820,30 @@ app.post('/servers/:serverId/tools/:toolName', async (req, res) => {
       arguments
     });
     
+    // Ensure we have a valid result object to return
+    if (result === undefined || result === null) {
+      return res.status(500).json({ 
+        error: "The MCP server returned an empty response" 
+      });
+    }
+    
+    // Handle different response formats
+    try {
+      // Return the parsed result
     res.json(result);
+    } catch (jsonError) {
+      console.error(`Error stringifying result for tool ${toolName}:`, jsonError);
+      // If JSON serialization fails, return a clean error
+      res.status(500).json({ 
+        error: "Failed to format the response from the MCP server",
+        details: jsonError.message
+      });
+    }
   } catch (error) {
     console.error(`Error executing tool ${toolName}:`, error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ 
+      error: `Error executing tool ${toolName}: ${error.message}` 
+    });
   }
 });
 
@@ -832,10 +985,30 @@ app.post('/servers/:serverId/prompts/:promptName', async (req, res) => {
       arguments
     });
     
+    // Ensure we have a valid result object to return
+    if (result === undefined || result === null) {
+      return res.status(500).json({ 
+        error: "The MCP server returned an empty response" 
+      });
+    }
+    
+    // Handle different response formats
+    try {
+      // Return the parsed result
     res.json(result);
+    } catch (jsonError) {
+      console.error(`Error stringifying result for prompt ${promptName}:`, jsonError);
+      // If JSON serialization fails, return a clean error
+      res.status(500).json({ 
+        error: "Failed to format the response from the MCP server",
+        details: jsonError.message
+      });
+    }
   } catch (error) {
     console.error(`Error executing prompt ${promptName}:`, error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({
+      error: `Error executing prompt ${promptName}: ${error.message}`
+    });
   }
 });
 
@@ -847,7 +1020,8 @@ app.get('/health', (req, res) => {
     // Create base server info
     const serverInfo = {
       id,
-      pid: info.pid
+      pid: info.pid,
+      initialization_state: serverInitializationState.get(id) || 'unknown'
     };
     
     // Only include risk level information if explicitly set

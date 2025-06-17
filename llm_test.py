@@ -29,8 +29,8 @@ from rich.syntax import Syntax
 
 # Default configuration
 DEFAULT_MCP_BRIDGE_URL = "http://localhost:3000"  # Default URL for MCP Bridge
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
-GEMINI_MODEL = "gemini-2.0-flash"  # Use the appropriate model as needed
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "AIzaSyClMnt9e64GpvKoOyWg3vU32txSiChuksA")
+GEMINI_MODEL = "gemini-2.5-pro-preview-05-06"  # Use the appropriate model as needed
 
 console = Console()
 
@@ -323,36 +323,94 @@ def process_llm_response(text):
     """Process the LLM response to extract the JSON part."""
     # Try to find JSON in the response
     try:
-        # Look for JSON content - sometimes the model might wrap it with ```json
-        if "```json" in text:
-            json_text = text.split("```json")[1].split("```")[0].strip()
-        elif "```" in text:
-            json_text = text.split("```")[1].strip()
-        else:
-            # Otherwise, just try to parse the text directly
-            json_text = text.strip()
-            
-        response_data = json.loads(json_text)
+        # Helper function to clean and parse JSON text
+        def clean_and_parse_json(json_text):
+            # Remove any line breaks within the JSON
+            cleaned_text = ' '.join(json_text.split())
+            try:
+                result = json.loads(cleaned_text)
+                console.print("[dim]Successfully parsed JSON[/dim]")
+                return result
+            except json.JSONDecodeError:
+                return None
+
+        console.print("[dim]Processing LLM response...[/dim]")
         
-        # Ensure the response has the expected structure
-        if not isinstance(response_data, dict):
-            response_data = {
-                "tool_call": None,
-                "response": str(response_data)
-            }
-        elif "tool_call" not in response_data:
-            response_data["tool_call"] = None
-        elif "response" not in response_data:
-            response_data["response"] = ""
-            
-        return response_data
-    except (json.JSONDecodeError, IndexError) as e:
-        console.print(f"[bold red]Error parsing LLM response as JSON:[/bold red] {e}")
-        console.print(f"Original response: {text}")
-        # Return a default structure
+        # First try to find JSON block at the end of the response
+        parts = text.split("{")
+        if len(parts) > 1:
+            console.print("[dim]Found potential JSON at end of response[/dim]")
+            # Take the last JSON block
+            potential_json = "{" + parts[-1].strip()
+            response_data = clean_and_parse_json(potential_json)
+            if response_data and isinstance(response_data, dict):
+                if "tool_call" not in response_data:
+                    response_data["tool_call"] = None
+                if "response" not in response_data:
+                    # Use the non-JSON part as the response
+                    non_json_text = text[:text.rfind("{")].strip()
+                    response_data["response"] = non_json_text or ""
+                console.print(f"[dim]Found valid tool call: {response_data.get('tool_call')}[/dim]")
+                return response_data
+
+        # If no valid JSON found at the end, look for JSON blocks in markdown code blocks
+        if "```json" in text:
+            parts = text.split("```json")
+            if len(parts) > 1:
+                json_block = parts[1].split("```")[0].strip()
+                response_data = clean_and_parse_json(json_block)
+                if response_data and isinstance(response_data, dict):
+                    if "tool_call" not in response_data:
+                        response_data["tool_call"] = None
+                    if "response" not in response_data:
+                        # Use the non-JSON part as the response
+                        non_json_text = text[:text.find("```json")].strip()
+                        response_data["response"] = non_json_text or ""
+                    return response_data
+
+        # If we still haven't found valid JSON, check for any code blocks
+        if "```" in text:
+            parts = text.split("```")
+            for part in parts:
+                if part.strip():
+                    response_data = clean_and_parse_json(part.strip())
+                    if response_data and isinstance(response_data, dict):
+                        if "tool_call" not in response_data:
+                            response_data["tool_call"] = None
+                        if "response" not in response_data:
+                            # Use the non-JSON part as the response
+                            non_json_text = text[:text.find("```")].strip()
+                            response_data["response"] = non_json_text or ""
+                        return response_data
+
+        # Try to find any JSON-like structure in the text
+        if "{" in text and "}" in text:
+            start = text.find("{")
+            end = text.rfind("}") + 1
+            if start < end:
+                potential_json = text[start:end]
+                response_data = clean_and_parse_json(potential_json)
+                if response_data and isinstance(response_data, dict):
+                    if "tool_call" not in response_data:
+                        response_data["tool_call"] = None
+                    if "response" not in response_data:
+                        # Use the non-JSON part as the response
+                        non_json_text = (text[:start] + text[end:]).strip()
+                        response_data["response"] = non_json_text or ""
+                    return response_data
+
+        # If no JSON found in any format, treat the entire text as the response
         return {
             "tool_call": None,
-            "response": "I couldn't format my response properly. Please try again with a clearer request."
+            "response": text.strip()
+        }
+
+    except Exception as e:
+        console.print(f"[bold red]Error processing LLM response:[/bold red] {e}")
+        # Instead of showing the error to the user, handle it gracefully
+        return {
+            "tool_call": None,
+            "response": text.strip() if text else "I couldn't format my response properly. Please try again with a clearer request."
         }
 
 def main():

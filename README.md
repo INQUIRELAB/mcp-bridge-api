@@ -2,15 +2,20 @@
 
 ## A Lightweight, LLM-Agnostic RESTful Proxy for Model Context Protocol Servers
 
+<div style="text-align:center;">
+  <figure>
+    <img src="./screenshot.png" alt="MCP Bridge Mobile Interface" width="650"/>
+    <figcaption><em>Figure: The React Native MCP Agent interface showing the chat screen with tool execution results (left) and the settings screen with MCP Bridge connection status and Gemini API configuration (right)</em></figcaption>
+  </figure>
+</div>
+
 **Authors:**  
-[Arash Ahmadi](https://github.com/Arash-san), [Sarah S. Sharif](https://www.ou.edu/coe/ece/faculty_directory/safura-sharifi), and [Yaser M. Banad](https://www.ou.edu/coe/ece/faculty_directory/banad_mike)*  
+Arash Ahmadi, Sarah S. Sharif, and Yaser M. Banad*  
 School of Electrical, and Computer Engineering, University of Oklahoma, Oklahoma, United States  
 *Corresponding author: bana@ou.edu
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-
 [![arXiv](https://img.shields.io/badge/arXiv-2504.08999-b31b1b.svg)](https://arxiv.org/abs/2504.08999)
-
 
 If you want to reference this research project in your work, please cite our paper:
 
@@ -25,7 +30,14 @@ If you want to reference this research project in your work, please cite our pap
 
 ## 📚 Introduction
 
-MCP Bridge is a lightweight, fast, and LLM-agnostic proxy that connects to multiple Model Context Protocol (MCP) servers and exposes their capabilities through a unified REST API. It enables any client on any platform to leverage MCP functionality without process execution constraints. Unlike Anthropic's official MCP SDK, MCP Bridge is fully independent and designed to work with any LLM backend which makes it adaptable, modular, and future-proof for diverse deployments. With optional risk-based execution levels, it provides granular security controls—from standard execution to confirmation workflows and Docker isolation—while maintaining backward compatibility with standard MCP clients. Complementing this server-side infrastructure is the MCP-Gemini Agent, a Python client that integrates Google's Gemini API with MCP Bridge. This agent enables natural language interaction with MCP tools through an intelligent LLM-powered interface that features multi-step reasoning for complex operations, security confirmation workflow handling, and configurable display options for enhanced usability. Together, MCP Bridge's versatile server-side capabilities and the Gemini Agent's intelligent client interface create a powerful ecosystem for developing sophisticated LLM-powered applications.
+MCP Bridge is a lightweight, fast, and LLM-agnostic proxy that connects to multiple Model Context Protocol (MCP) servers and exposes their capabilities through a unified REST API. It enables any client on any platform to leverage MCP functionality without process execution constraints. Unlike Anthropic's official MCP SDK, MCP Bridge is fully independent and designed to work with any LLM backend which makes it adaptable, modular, and future-proof for diverse deployments. With optional risk-based execution levels, it provides granular security controls—from standard execution to confirmation workflows and Docker isolation—while maintaining backward compatibility with standard MCP clients. 
+
+Complementing this server-side infrastructure are two distinct intelligent client implementations:
+
+1. **Python MCP-Gemini Agent** - A command-line Python client for desktop environments
+2. **React Native MCP Agent** - A modern cross-platform mobile application
+
+Both clients enable natural language interaction with MCP tools through intelligent LLM-powered interfaces that feature multi-step reasoning for complex operations, security confirmation workflow handling, and configurable display options for enhanced usability. Together, MCP Bridge's versatile server-side capabilities and these intelligent client interfaces create a powerful ecosystem for developing sophisticated LLM-powered applications.
 
 ### ⚠️ The Problem
 
@@ -35,36 +47,12 @@ MCP Bridge is a lightweight, fast, and LLM-agnostic proxy that connects to multi
 - Multiple isolated clients connecting to the same servers causes redundancy and increases resource usage
 - Interacting directly with MCP tools requires technical knowledge of specific tool formats and requirements
 
-## 📑 Table of Contents
-
-- [Architecture](#️-architecture)
-- [Installation](#-installation)
-  - [Prerequisites](#-prerequisites)
-  - [Quick Setup](#-quick-setup)
-- [Configuration](#️-configuration)
-  - [MCP Bridge Configuration](#mcp-bridge-configuration)
-  - [MCP-Gemini Agent Configuration](#mcp-gemini-agent-configuration)
-- [API Usage](#-api-usage)
-  - [General Endpoints](#-general-endpoints)
-  - [Server-Specific Endpoints](#-server-specific-endpoints)
-- [Example Requests](#-example-requests)
-- [MCP-Gemini Agent Features](#-mcp-gemini-agent-features)
-- [Risk Levels](#-risk-levels)
-  - [Risk Level Classification](#risk-level-classification)
-  - [Configuring Risk Levels](#configuring-risk-levels)
-  - [Risk Level Workflows](#risk-level-workflows)
-- [Deployment Considerations](#-deployment-considerations)
-  - [Security](#-security)
-  - [Scaling](#-scaling)
-- [Comparison with Other MCP Bridge/Proxy Repositories](#-comparison-with-other-mcp-bridgeproxy-repositories)
-- [License](#-license)
-
 ## 🏗️ Architecture
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│     Mobile      │     │     Browser     │     │  Other Clients  │
-│    Application  │     │   Application   │     │                 │
+│  React Native   │     │     Python      │     │  Other Clients  │
+│   MCP Agent     │     │  Gemini Agent   │     │                 │
 └────────┬────────┘     └────────┬────────┘     └────────┬────────┘
          │                       │                       │
          │                       │                       │
@@ -96,7 +84,8 @@ MCP Bridge is a lightweight, fast, and LLM-agnostic proxy that connects to multi
 ### 📦 Prerequisites
 
 - Node.js 18+ for MCP Bridge
-- Python 3.8+ for the MCP-Gemini Agent
+- Python 3.8+ for the Python MCP-Gemini Agent
+- React Native development environment for the mobile app
 
 ### 🚀 Quick Setup
 
@@ -110,7 +99,7 @@ npm install express cors morgan uuid
 node mcp-bridge.js
 ```
 
-#### MCP-Gemini Agent
+#### Python MCP-Gemini Agent
 
 ```bash
 # Install dependencies
@@ -119,6 +108,94 @@ pip install google-generativeai requests rich
 # Start the agent
 python llm_test.py
 ```
+
+#### React Native MCP Agent
+
+```bash
+# Navigate to the React Native app directory
+cd reactnative-gamini-mcp-agent
+
+# Install dependencies
+npm install
+
+# Start the development server
+npx expo start
+```
+
+## 🐍 Python MCP-Gemini Agent
+
+The Python MCP-Gemini Agent is a command-line client that connects to MCP Bridge and uses Google's Gemini LLM to process user requests and execute MCP tools commands. It's designed for desktop environments and developer workflows.
+
+### Key Features
+
+1. **Multi-step reasoning** - Supports sequenced tool calls for complex operations
+2. **Security confirmation flow** - Integrated handling for medium and high risk operations
+3. **Flexible JSON display** - Control the verbosity of JSON outputs for better readability
+4. **Configurable connection** - Connect to any MCP Bridge instance with custom URL and port
+5. **Discovery of available tools** - Automatically detects and uses all tools from connected servers
+
+### Python Agent Configuration
+
+The Python MCP-Gemini Agent supports several command-line options:
+
+```
+usage: llm_test.py [-h] [--hide-json] [--json-width JSON_WIDTH] [--mcp-url MCP_URL] [--mcp-port MCP_PORT]
+
+MCP-Gemini Agent with configurable settings
+
+options:
+  -h, --help            show this help message and exit
+  --hide-json           Hide JSON results from tool executions
+  --json-width JSON_WIDTH
+                        Maximum width for JSON output (default: 100)
+  --mcp-url MCP_URL     MCP Bridge URL including protocol and port (default: http://localhost:3000)
+  --mcp-port MCP_PORT   Override port in MCP Bridge URL (default: use port from --mcp-url)
+```
+
+### Python Agent Usage Examples
+
+```bash
+# Basic usage with default settings
+python llm_test.py
+
+# Hide JSON results for cleaner output
+python llm_test.py --hide-json
+
+# Connect to a custom MCP Bridge server
+python llm_test.py --mcp-url http://192.168.1.100:3000
+
+# Connect to a different port
+python llm_test.py --mcp-port 4000
+
+# Adjust JSON width display for better formatting
+python llm_test.py --json-width 120
+```
+
+## 📱 React Native MCP Agent
+
+The React Native MCP Agent is a modern, cross-platform mobile application that provides intuitive access to MCP tools through a clean, user-friendly interface. Built with Expo and React Native Paper, it offers a dark-themed, Material Design 3 interface optimized for both iOS and Android platforms.
+
+### Key Features
+
+- **Cross-Platform Compatibility**: Runs on iOS, Android, and web platforms
+- **Intuitive Chat Interface**: Natural language interaction with segmented message display
+- **Real-Time Tool Execution**: Visual feedback for MCP tool calls with collapsible result sections
+- **Conversation Management**: Persistent conversation history with AI-generated titles
+- **Modern UI/UX**: Dark theme with glassmorphism effects and smooth animations
+- **Comprehensive Settings**: Easy configuration of MCP Bridge connections and Gemini API settings
+- **Security Integration**: Built-in support for MCP Bridge's risk-level confirmation workflows
+- **Multi-Model Support**: Compatible with various Gemini models including the latest 2.5 Flash Preview
+
+### Getting Started with the React Native app
+
+1. **Configure MCP Bridge**: Set up your MCP Bridge server URL in the Settings tab
+2. **Add Gemini API Key**: Enter your Google Gemini API key for AI functionality
+3. **Select Model**: Choose from available Gemini models including the latest releases
+4. **Start Chatting**: Begin natural language conversations with your MCP tools
+
+
+
+The app automatically discovers available MCP tools and provides contextual assistance for complex multi-step operations.
 
 ## ⚙️ Configuration
 
@@ -145,24 +222,6 @@ MCP Bridge is configured through a JSON file named `mcp_config.json` in the proj
     }
   }
 }
-```
-
-### MCP-Gemini Agent Configuration
-
-The MCP-Gemini Agent supports several command-line options:
-
-```
-usage: llm_test.py [-h] [--hide-json] [--json-width JSON_WIDTH] [--mcp-url MCP_URL] [--mcp-port MCP_PORT]
-
-MCP-Gemini Agent with configurable settings
-
-options:
-  -h, --help            show this help message and exit
-  --hide-json           Hide JSON results from tool executions
-  --json-width JSON_WIDTH
-                        Maximum width for JSON output (default: 100)
-  --mcp-url MCP_URL     MCP Bridge URL including protocol and port (default: http://localhost:3000)
-  --mcp-port MCP_PORT   Override port in MCP Bridge URL (default: use port from --mcp-url)
 ```
 
 ## 🧪 API Usage
@@ -203,9 +262,13 @@ Content-Type: application/json
 }
 ```
 
-## 🧪 MCP-Gemini Agent Features
 
-The MCP-Gemini Agent is a Python-based client that connects to MCP Bridge Node.JS server and uses Google's Gemini LLM to process user requests and execute MCP tools commands. Key features:
+
+## 🧪 Client Features
+
+### Python Agent Features
+
+The Python MCP-Gemini Agent provides:
 
 1. **Multi-step reasoning** - Supports sequenced tool calls for complex operations
 2. **Security confirmation flow** - Integrated handling for medium and high risk operations
@@ -213,24 +276,17 @@ The MCP-Gemini Agent is a Python-based client that connects to MCP Bridge Node.J
 4. **Configurable connection** - Connect to any MCP Bridge instance with custom URL and port
 5. **Discovery of available tools** - Automatically detects and uses all tools from connected servers
 
-Example usage:
+### React Native Agent Features
 
-```bash
-# Basic usage with default settings
-python llm_test.py
+The React Native MCP Agent provides:
 
-# Hide JSON results for cleaner output
-python llm_test.py --hide-json
-
-# Connect to a custom MCP Bridge server
-python llm_test.py --mcp-url http://192.168.1.100:3000
-
-# Connect to a different port
-python llm_test.py --mcp-port 4000
-
-# Adjust JSON width display for better formatting
-python llm_test.py --json-width 120
-```
+1. **Conversation Management** - Persistent chat history with AI-generated titles
+2. **Segmented Message Display** - Clean separation of text responses and tool operations
+3. **Real-time Tool Execution** - Visual feedback with collapsible result sections
+4. **Security Confirmation UI** - Native confirmation dialogs for medium/high risk operations
+5. **Multi-Model Support** - Support for various Gemini models with easy switching
+6. **Cross-Platform** - Works on iOS, Android, and web platforms
+7. **Modern Material Design** - Dark theme with smooth animations and haptic feedback
 
 ## 🔐 Risk Levels
 
@@ -264,6 +320,19 @@ Risk levels are optional for backward compatibility. You can configure risk leve
         "SLACK_TEAM_ID": "your-team-id"
       },
       "riskLevel": 1
+    },
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_TOKEN": "your-github-token"
+      },
+      "riskLevel": 3,
+      "docker": {
+        "image": "node:18",
+        "volumes": ["/tmp:/tmp"],
+        "network": "host"
+      }
     }
   }
 }
@@ -282,12 +351,30 @@ Risk levels are optional for backward compatibility. You can configure risk leve
 3. Client must make a separate confirmation request to proceed
 4. Only after confirmation does the server execute the operation
 
-The MCP-Gemini Agent handles this confirmation flow automatically, prompting the user for approval when needed.
+Both the Python MCP-Gemini Agent and React Native Agent handle this confirmation flow automatically, prompting the user for approval when needed.
 
 #### High Risk (Level 3)
 - Server automatically runs in an isolated Docker container
 - Provides environmental isolation for the MCP server process
 - Requires Docker to be installed and properly configured
+
+## 📋 Changelog
+
+### Latest Updates
+
+- **✅ UV Package Manager Support**: Fixed the issue with loading UV-based (Python) MCP servers. MCP Bridge now properly initializes and communicates with Python MCP servers that use the UV package manager, resolving previous compatibility issues with UV-based toolchains.
+
+- **📱 React Native MCP Agent**: Added a comprehensive mobile application with:
+  - Cross-platform support for iOS, Android, and web
+  - Modern Material Design 3 interface with dark theming
+  - Intelligent conversation management with AI-generated titles
+  - Real-time tool execution with visual feedback
+  - Built-in security confirmation workflows
+  - Support for multiple Gemini models including latest releases
+
+- **🔧 Enhanced Tool Execution**: Improved multi-step reasoning capabilities across all clients
+- **🛡️ Security Improvements**: Enhanced risk-level confirmation flows with better user experience
+- **📊 Better Error Handling**: More robust error handling and recovery mechanisms
 
 ## 🚧 Deployment Considerations
 
@@ -302,6 +389,13 @@ The MCP-Gemini Agent handles this confirmation flow automatically, prompting the
 - Use load balancers
 - Pool high-demand servers
 - Track metrics and resource pressure
+
+### 📱 Mobile Deployment
+
+For the React Native app:
+- Build for production using `npx expo build`
+- Configure app store deployment with EAS Build
+- Set up over-the-air updates with EAS Update
 
 ## 📊 Comparison with Other MCP Bridge/Proxy Repositories
 
@@ -323,6 +417,7 @@ The MCP-Gemini Agent handles this confirmation flow automatically, prompting the
 
 *   ✨ : Unique or particularly strong advantage of `INQUIRELAB/mcp-bridge-api`.
 *   ✔️ : Feature present and well-implemented, often comparable or slightly advantageous compared to simpler implementations.
+
 
 ## 📝 License
 
