@@ -369,6 +369,26 @@ Both the Python MCP-Gemini Agent and React Native Agent handle this confirmation
 - **🛡️ Security Improvements**: Enhanced risk-level confirmation flows with better user experience
 - **📊 Better Error Handling**: More robust error handling and recovery mechanisms
 
+## 🌟 Community Impact and Recognition
+
+MCP Bridge has gained recognition within the AI and development communities, being featured in academic research, industry security analyses, linkedin, and technical publications. These acknowledgments highlight the practical value and real-world impact of our lightweight, LLM-agnostic proxy solution.
+
+<img src="./assets/citations1 (837x224).png" alt="arXiv Research Paper Citation" width="650"/>
+
+*[Cited by this paper: From Prompt Injections to Protocol Exploits: Threats in LLM-Powered AI Agents Workflows](https://arxiv.org/abs/2506.23260) - arXiv preprint discussing security implications in LLM-powered AI agent workflows*
+
+<img src="./assets/wiz1 (1560x694).png" alt="Wiz Security Research Briefing" width="650"/>
+
+*[Research Briefing: MCP Security](https://www.wiz.io/blog/mcp-security-research-briefing) - Wiz security research highlighting MCP Bridge as an example of academic work in the MCP ecosystem*
+
+<img src="./assets/linkedin1 (942x635).png" alt="LinkedIn Professional Network Discussion" width="650"/>
+
+*[LinkedIn Post by Vaibhava Lakshmi Ravideshik](https://www.linkedin.com/posts/vaibhava-lakshmi-ravideshik_aiintegration-modelcontextprotocol-llm-activity-7344581233097547777-IktU/) - A LinkedIn Learning Instructor discussion about MCP Bridge's practical applications*
+
+<img src="./assets/medium1 (1009x684).png" alt="Medium Technical Article" width="650"/>
+
+*[Unlocking Agentic Apps with the Model Context Protocol (MCP) For Financial Services](https://medium.com/vedcraft/unlocking-agentic-apps-with-the-model-context-protocol-mcp-for-financial-services-a-complete-3196cc455868) - Medium article featuring MCP Bridge's design pattern for financial applications*
+
 ## 🚧 Deployment Considerations
 
 ### 🔒 Security
@@ -403,14 +423,4 @@ For the React Native app:
 | 🧩 **LLM Integration**   | None                                                             | **Yes (Dedicated Gemini Agent w/ Multi-Step Reasoning) ✨**                           | Yes (OpenAI endpoint)                                                 | None (API only)                                                        | Yes (LangChain)                                                           | Yes (OpenAI client)                                                   |                                                          |
 | 🏗️ **Complexity**       | Low                                                         | **Low ✔️**                                                          | High                                                                    | Moderate                                                               | Moderate-High                                                             | Moderate                                                                |
 | 🛡️ **Security Features** | None                                                             | **Risk Levels (Medium/High) + Confirmation Flow + Docker Isolation ✨**               | Basic Auth (API Keys), CORS                                             | None                                                                   | None                                                                      | None                                                                    |
-| 📦 **Key Dependencies**  | `express`, `mcp-client`                                        | `express`, `uuid` (Bridge, minimum dependency); `requests`, `google-genai`, `rich` (Agent)            | `fastapi`, `mcp`, `mcpx`                                                  | `express`, `@mcp/sdk`, `socket.io`                                     | `fastapi`, `mcp`, `langchain`, `langgraph`                              | `mcp`, `openai`, `pydantic`                                             |
-| 🤝 **Architecture**      | Simple Facade                                                    | **Decoupled Bridge + Agent ✨**                                                     | Monolithic Bridge/Server                                                | REST API Server                                                        | LangChain Agent App                                                       | CLI Bridge Application                                                  |
-
-**Icon Key:**
-
-*   ✨ : Unique or particularly strong advantage of `INQUIRELAB/mcp-bridge-api`.
-*   ✔️ : Feature present and well-implemented, often comparable or slightly advantageous compared to simpler implementations.
-
-## 📝 License
-
-MIT License
+| 📦 **Key Dependencies**  | `express`, `mcp-client`                                        | `express`, `uuid` (Bridge, minimum dependency); `requests`, `google-genai`, `rich` (Agent)            | `fastapi`, `mcp`, `mcpx`                                                  | `express`, `@mcp/sdk`, `socket.io`                                     | `fastapi`, `
