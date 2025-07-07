@@ -25,6 +25,22 @@ If you want to reference this research project in your work, please cite our pap
 }
 ```
 
+## 📋 Table of Contents
+
+- [📚 Introduction](#-introduction)
+- [🏗️ Architecture](#️-architecture)
+- [💾 Installation](#-installation)
+- [🐍 Python MCP-Gemini Agent](#-python-mcp-gemini-agent)
+- [📱 React Native MCP Agent](#-react-native-mcp-agent)
+- [⚙️ Configuration](#️-configuration)
+- [🧪 API Usage](#-api-usage)
+- [🔐 Risk Levels](#-risk-levels)
+- [🌟 Community Impact and Recognition](#-community-impact-and-recognition)
+- [📋 Changelog](#-changelog)
+- [🚧 Deployment Considerations](#-deployment-considerations)
+- [📊 Comparison with Other MCP Bridge/Proxy Repositories](#-comparison-with-other-mcp-bridgeproxy-repositories)
+- [📝 License](#-license)
+
 ## 📚 Introduction
 
 MCP Bridge is a lightweight, fast, and LLM-agnostic proxy that connects to multiple Model Context Protocol (MCP) servers and exposes their capabilities through a unified REST API. It enables any client on any platform to leverage MCP functionality without process execution constraints. Unlike Anthropic's official MCP SDK, MCP Bridge is fully independent and designed to work with any LLM backend which makes it adaptable, modular, and future-proof for diverse deployments. With optional risk-based execution levels, it provides granular security controls—from standard execution to confirmation workflows and Docker isolation—while maintaining backward compatibility with standard MCP clients. 
@@ -371,17 +387,17 @@ Both the Python MCP-Gemini Agent and React Native Agent handle this confirmation
 
 ## 🌟 Community Impact and Recognition
 
-MCP Bridge has gained recognition within the AI and development communities, being featured in academic research, industry security analyses, linkedin, and technical publications. These acknowledgments highlight the practical value and real-world impact of our lightweight, LLM-agnostic proxy solution.
+MCP Bridge has gained recognition within the AI and development communities, being featured in academic research, industry security analyses, professional discourse, and technical publications. These acknowledgments highlight the practical value and real-world impact of our lightweight, LLM-agnostic proxy solution.
 
 <img src="./assets/citations1 (837x224).png" alt="arXiv Research Paper Citation" width="650"/>
 
-*[Cited by this paper: From Prompt Injections to Protocol Exploits: Threats in LLM-Powered AI Agents Workflows](https://arxiv.org/abs/2506.23260) - arXiv preprint discussing security implications in LLM-powered AI agent workflows*
+*[Cited by this paper: From Prompt Injections to Protocol Exploits: Threats in LLM-Powered AI Agents Workflows](https://arxiv.org/abs/2506.23260) - A research paper discussing security implications in LLM-powered AI agent workflows*
 
 <img src="./assets/wiz1 (1560x694).png" alt="Wiz Security Research Briefing" width="650"/>
 
 *[Research Briefing: MCP Security](https://www.wiz.io/blog/mcp-security-research-briefing) - Wiz security research highlighting MCP Bridge as an example of academic work in the MCP ecosystem*
 
-<img src="./assets/linkedin1 (942x635).png" alt="LinkedIn Professional Network Discussion" width="650"/>
+<img src="./assets/linkedin1 (942x635).png" alt="LinkedIn Professional Discourse" width="650"/>
 
 *[LinkedIn Post by Vaibhava Lakshmi Ravideshik](https://www.linkedin.com/posts/vaibhava-lakshmi-ravideshik_aiintegration-modelcontextprotocol-llm-activity-7344581233097547777-IktU/) - A LinkedIn Learning Instructor discussion about MCP Bridge's practical applications*
 
