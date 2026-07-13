@@ -235,6 +235,40 @@ MCP Bridge is configured through a JSON file named `mcp_config.json` in the proj
 }
 ```
 
+## 🔒 Security
+
+MCP Bridge starts local processes on request, so its process-control API is
+privileged. It is protected by three layers, configured through environment
+variables:
+
+| Variable | Default | Purpose |
+| --- | --- | --- |
+| `MCP_BRIDGE_HOST` | `127.0.0.1` | Interface to bind. Localhost only by default, so the API is not reachable from the network. Set to `0.0.0.0` to expose it (only together with an API key). |
+| `MCP_BRIDGE_API_KEY` | _(unset)_ | When set, privileged endpoints require `Authorization: Bearer <key>` (or `X-API-Key: <key>`). Strongly recommended whenever the bridge is bound to anything other than localhost. |
+| `MCP_BRIDGE_ALLOWED_COMMANDS` | `node,npx,python,python3,py,uv,uvx,deno,bun,docker` | Comma-separated allowlist of executables that `POST /servers` may launch. |
+
+**How the dynamic-server endpoint is protected.** `POST /servers` (and the
+other state-changing endpoints: `DELETE /servers/:id`, tool calls,
+confirmations, and prompt calls) now:
+
+- require the API key when one is configured;
+- accept only a **bare executable name** from the allowlist (absolute or
+  relative paths, `..`, and shell metacharacters are rejected before anything
+  is started);
+- spawn the process with **no shell** (`shell: false`), so neither the command
+  nor its arguments are interpreted by a shell.
+
+Read-only endpoints (`GET /health`, `GET /servers`) remain public.
+
+Servers defined in `mcp_config.json` are trusted (they come from the local
+operator) and are not subject to the API allowlist. If you expose the bridge
+beyond your own machine, always set `MCP_BRIDGE_API_KEY`.
+
+```bash
+# Example: expose the bridge with authentication
+MCP_BRIDGE_API_KEY=$(openssl rand -hex 32) MCP_BRIDGE_HOST=0.0.0.0 node mcp-bridge.js
+```
+
 ## 🧪 API Usage
 
 MCP Bridge exposes a clean and intuitive REST API for interacting with connected servers. Here's a breakdown of available endpoints:

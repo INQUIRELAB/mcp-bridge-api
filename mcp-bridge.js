@@ -35,6 +35,78 @@ console.log('Starting MCP Bridge...');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// ---------------------------------------------------------------------------
+// Security configuration
+//
+// The bridge launches local processes on request, so its process-control API
+// is privileged. Three layers guard it against the unauthenticated arbitrary
+// process execution reported in issue #1:
+//   1. Bind to localhost by default (set MCP_BRIDGE_HOST to expose it).
+//   2. Optional API key (MCP_BRIDGE_API_KEY) enforced on privileged routes.
+//   3. A strict command allowlist for dynamically started servers, with no
+//      shell interpretation of the command or its arguments.
+// ---------------------------------------------------------------------------
+const crypto = require('crypto');
+
+const API_KEY = process.env.MCP_BRIDGE_API_KEY || '';
+const HOST = process.env.MCP_BRIDGE_HOST || '127.0.0.1';
+
+// Commands that POST /servers is allowed to launch. Override with a
+// comma-separated MCP_BRIDGE_ALLOWED_COMMANDS. Bare executable names only
+// (resolved on PATH); absolute/relative paths and shell metacharacters are
+// rejected outright.
+const DEFAULT_ALLOWED_COMMANDS = ['node', 'npx', 'python', 'python3', 'py', 'uv', 'uvx', 'deno', 'bun', 'docker'];
+const ALLOWED_COMMANDS = new Set(
+  (process.env.MCP_BRIDGE_ALLOWED_COMMANDS
+    ? process.env.MCP_BRIDGE_ALLOWED_COMMANDS.split(',')
+    : DEFAULT_ALLOWED_COMMANDS
+  ).map((c) => c.trim().toLowerCase()).filter(Boolean)
+);
+
+const isLocalHost = HOST === '127.0.0.1' || HOST === 'localhost' || HOST === '::1';
+if (!API_KEY) {
+  console.warn('[security] MCP_BRIDGE_API_KEY is not set, so privileged endpoints are unauthenticated. ' +
+    `Binding to ${HOST}. Set MCP_BRIDGE_API_KEY before exposing the bridge beyond localhost.`);
+  if (!isLocalHost) {
+    console.warn(`[security] WARNING: bound to ${HOST} without an API key. This exposes local ` +
+      'process execution to the network. Set MCP_BRIDGE_API_KEY or bind to localhost.');
+  }
+}
+
+// Constant-time API key check for privileged routes. When no key is
+// configured the bridge relies on its localhost binding instead.
+function requireAuth(req, res, next) {
+  if (!API_KEY) return next();
+  const header = req.get('authorization') || '';
+  const provided = header.startsWith('Bearer ') ? header.slice(7) : (req.get('x-api-key') || '');
+  const a = Buffer.from(String(provided));
+  const b = Buffer.from(API_KEY);
+  if (a.length === b.length && crypto.timingSafeEqual(a, b)) return next();
+  return res.status(401).json({ error: 'Unauthorized: a valid API key is required for this endpoint' });
+}
+
+// Validate a dynamically requested server command against the allowlist and
+// reject anything that looks like a path or carries shell metacharacters.
+function validateServerCommand(command, args) {
+  if (typeof command !== 'string' || command.trim() === '') {
+    return { ok: false, error: 'command must be a non-empty string' };
+  }
+  if (/[/\\]/.test(command) || command.includes('..')) {
+    return { ok: false, error: 'command must be a bare executable name, not a path' };
+  }
+  if (/[;&|`$(){}<>\n\r"'*?~\s]/.test(command)) {
+    return { ok: false, error: 'command contains disallowed characters' };
+  }
+  if (!ALLOWED_COMMANDS.has(command.toLowerCase())) {
+    return { ok: false, error: `command '${command}' is not permitted. Allowed commands: ${[...ALLOWED_COMMANDS].join(', ')}. ` +
+      'Set MCP_BRIDGE_ALLOWED_COMMANDS to change this list.' };
+  }
+  if (args !== undefined && (!Array.isArray(args) || !args.every((a) => typeof a === 'string'))) {
+    return { ok: false, error: 'args must be an array of strings' };
+  }
+  return { ok: true };
+}
+
 // Middleware
 app.use(cors());
 app.use(express.json());
@@ -262,10 +334,12 @@ async function startServer(serverId, config) {
             }
           }
         } else {
-          // On Unix-like systems, try using which to find the command
+          // On Unix-like systems, try using which to find the command.
+          // Use execFileSync (no shell) so the command name can't be
+          // interpreted as a shell fragment (issue #1).
           try {
-            const { execSync } = require('child_process');
-            const whichOutput = execSync(`which ${config.command}`).toString().trim();
+            const { execFileSync } = require('child_process');
+            const whichOutput = execFileSync('which', [config.command]).toString().trim();
             if (whichOutput) {
               console.log(`Found ${config.command} at ${whichOutput}`);
               commandPath = whichOutput;
@@ -296,11 +370,14 @@ async function startServer(serverId, config) {
         console.log(`No custom environment variables for ${serverId}`);
       }
       
-      // Spawn the server process with shell option for better compatibility
+      // Spawn the server process WITHOUT a shell so neither the command nor
+      // its arguments are interpreted by a shell (prevents metacharacter
+      // injection, issue #1). Windows .cmd files are launched via `cmd /c`
+      // above; all other executables are resolved on PATH by spawn directly.
       const serverProcess = spawn(actualCommand, actualArgs, {
         env: envVars,
         stdio: 'pipe',
-        shell: !isWindowsCmd // Use shell only if not handling Windows .cmd specially
+        shell: false
       });
       
       console.log(`Server process spawned for ${serverId}, PID: ${serverProcess.pid}`);
@@ -665,18 +742,25 @@ app.get('/servers', (req, res) => {
 });
 
 // Start a new server (manual configuration)
-app.post('/servers', async (req, res) => {
+app.post('/servers', requireAuth, async (req, res) => {
   console.log('POST /servers', req.body);
   try {
     const { id, command, args, env, riskLevel, docker } = req.body;
-    
+
     if (!id || !command) {
       console.log('Missing required fields');
       return res.status(400).json({
         error: "Server ID and command are required"
       });
     }
-    
+
+    // Reject arbitrary/unsafe executables before anything is spawned (issue #1).
+    const commandCheck = validateServerCommand(command, args);
+    if (!commandCheck.ok) {
+      console.warn(`Rejected server start for '${id}': ${commandCheck.error}`);
+      return res.status(400).json({ error: commandCheck.error });
+    }
+
     if (serverProcesses.has(id)) {
       console.log(`Server with ID '${id}' already exists`);
       return res.status(409).json({
@@ -750,7 +834,7 @@ app.post('/servers', async (req, res) => {
 });
 
 // Stop a server
-app.delete('/servers/:serverId', async (req, res) => {
+app.delete('/servers/:serverId', requireAuth, async (req, res) => {
   const { serverId } = req.params;
   console.log(`DELETE /servers/${serverId}`);
   
@@ -797,7 +881,7 @@ app.get('/servers/:serverId/tools', async (req, res) => {
 });
 
 // Execute a tool on a server
-app.post('/servers/:serverId/tools/:toolName', async (req, res) => {
+app.post('/servers/:serverId/tools/:toolName', requireAuth, async (req, res) => {
   const { serverId, toolName } = req.params;
   const arguments = req.body;
   
@@ -848,7 +932,7 @@ app.post('/servers/:serverId/tools/:toolName', async (req, res) => {
 });
 
 // Confirm a medium risk level request
-app.post('/confirmations/:confirmationId', async (req, res) => {
+app.post('/confirmations/:confirmationId', requireAuth, async (req, res) => {
   const { confirmationId } = req.params;
   const { confirm } = req.body;
   
@@ -967,7 +1051,7 @@ app.get('/servers/:serverId/prompts', async (req, res) => {
 });
 
 // Execute a prompt
-app.post('/servers/:serverId/prompts/:promptName', async (req, res) => {
+app.post('/servers/:serverId/prompts/:promptName', requireAuth, async (req, res) => {
   const { serverId, promptName } = req.params;
   const arguments = req.body;
   
@@ -1045,9 +1129,12 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Start the server
-app.listen(PORT, async () => {
-  console.log(`MCP Bridge server running on port ${PORT}`);
+// Start the server. Bind to HOST (localhost by default) so local process
+// execution is not exposed to the network unless the operator opts in.
+app.listen(PORT, HOST, async () => {
+  console.log(`MCP Bridge server running on ${HOST}:${PORT}`);
+  console.log(`[security] API key auth: ${API_KEY ? 'enabled' : 'disabled (localhost only)'}; ` +
+    `allowed commands: ${[...ALLOWED_COMMANDS].join(', ')}`);
   await initServers();
   console.log('Ready to handle requests');
 });
