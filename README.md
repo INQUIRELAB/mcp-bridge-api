@@ -11,7 +11,7 @@ Arash Ahmadi, Sarah S. Sharif, and Yaser M. Banad*
 School of Electrical, and Computer Engineering, University of Oklahoma, Oklahoma, United States  
 *Corresponding author: bana@ou.edu
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![License: INQUIRE Academic](https://img.shields.io/badge/License-INQUIRE%20Academic-red.svg)](LICENSE)
 [![arXiv](https://img.shields.io/badge/arXiv-2504.08999-b31b1b.svg)](https://arxiv.org/abs/2504.08999)
 
 If you want to reference this research project in your work, please cite our paper:
