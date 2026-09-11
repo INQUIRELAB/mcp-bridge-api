@@ -1,21 +1,57 @@
-MIT License
+INQUIRE Lab Academic Research License (Version 1.0)
 
-Copyright (c) 2025 INQUIRELAB
+Copyright (c) 2026 INQUIRE Lab, School of Electrical and Computer Engineering,
+University of Oklahoma. All rights reserved.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+1. Grant of Limited Rights
+Permission is granted to any individual or academic institution to view, download,
+compile, and execute the software and associated files in this repository (the
+"Software") solely for non-commercial academic research, peer review, and
+verification of results reported in the associated publications.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+2. Restrictions
+Without prior written permission from the INQUIRE Lab you may not (a) use the
+Software or any part of it for any commercial purpose, including internal use by a
+for-profit entity, consulting work, or the development of commercial products or
+services; (b) redistribute, publish, sublicense, sell, or host the Software or any
+substantial portion of it; (c) create or distribute derivative works, modified
+versions, or ports of the Software; or (d) use the Software to provide services to
+third parties.
 
+3. Attribution
+Any publication, presentation, or report describing results obtained with the
+Software must cite the associated INQUIRE Lab publication.
+
+4. Patent Rights
+No license, express or implied, is granted to any patent, patent application, or
+other intellectual property right of the INQUIRE Lab, the University of Oklahoma,
+or the authors. One or more patent applications covering methods implemented in
+this repository may be pending. Public release of the Software does not constitute
+a waiver, dedication to the public, or license of any such right.
+
+5. Government Rights
+Portions of this work were developed with United States Government support. The
+Government retains the rights granted to it under the applicable award terms, and
+nothing in this license limits those rights.
+
+6. Termination
+This license terminates automatically upon any breach of its terms. Upon
+termination you must cease all use of the Software and destroy all copies in your
+possession.
+
+7. No Warranty
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS, THE
+INQUIRE LAB, OR THE UNIVERSITY OF OKLAHOMA BE LIABLE FOR ANY CLAIM, DAMAGES, OR
+OTHER LIABILITY ARISING FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE
+USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+8. Prior Versions
+Copies of this repository obtained under a previous license remain subject to that
+license for those copies only. This license governs this version of the Software
+and all subsequent versions.
+
+9. Contact
+Licensing and permission inquiries: INQUIRE Lab, School of Electrical and Computer
+Engineering, University of Oklahoma, Norman, Oklahoma.
