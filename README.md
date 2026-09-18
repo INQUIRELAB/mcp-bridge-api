@@ -11,7 +11,7 @@ Arash Ahmadi, Sarah S. Sharif, and Yaser M. Banad*
 School of Electrical, and Computer Engineering, University of Oklahoma, Oklahoma, United States  
 *Corresponding author: bana@ou.edu
 
-[![License: INQUIRE Academic](https://img.shields.io/badge/License-INQUIRE%20Academic-red.svg)](LICENSE)
+[![License: Noncommercial](https://img.shields.io/badge/License-Noncommercial-blue.svg)](LICENSE)
 [![arXiv](https://img.shields.io/badge/arXiv-2504.08999-b31b1b.svg)](https://arxiv.org/abs/2504.08999)
 
 If you want to reference this research project in your work, please cite our paper:
@@ -440,3 +440,7 @@ For the React Native app:
 | 🏗️ **Complexity**       | Low                                                         | **Low ✔️**                                                          | High                                                                    | Moderate                                                               | Moderate-High                                                             | Moderate                                                                |
 | 🛡️ **Security Features** | None                                                             | **Risk Levels (Medium/High) + Confirmation Flow + Docker Isolation ✨**               | Basic Auth (API Keys), CORS                                             | None                                                                   | None                                                                      | None                                                                    |
 | 📦 **Key Dependencies**  | `express`, `mcp-client`                                        | `express`, `uuid` (Bridge, minimum dependency); `requests`, `google-genai`, `rich` (Agent)            | `fastapi`, `mcp`, `mcpx`                                                  | `express`, `@mcp/sdk`, `socket.io`                                     | `fastapi`, `
+
+## License scope
+
+Original INQUIRE Lab code is licensed under PolyForm Noncommercial License 1.0.0. Original INQUIRE Lab datasets, figures, and documentation are licensed under CC BY-NC 4.0. See [LICENSE](LICENSE) for scope and the full license texts. Materials from other rights holders retain their original terms.

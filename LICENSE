@@ -1,57 +1,13 @@
-INQUIRE Lab Academic Research License (Version 1.0)
+# License scope
 
-Copyright (c) 2026 INQUIRE Lab, School of Electrical and Computer Engineering,
-University of Oklahoma. All rights reserved.
+Copyright (c) 2026 INQUIRE Lab, School of Electrical and Computer Engineering, University of Oklahoma.
 
-1. Grant of Limited Rights
-Permission is granted to any individual or academic institution to view, download,
-compile, and execute the software and associated files in this repository (the
-"Software") solely for non-commercial academic research, peer review, and
-verification of results reported in the associated publications.
+Original software, scripts, notebooks, and software configuration supplied by INQUIRE Lab are offered under the PolyForm Noncommercial License 1.0.0 in LICENSE-CODE.txt. Original datasets, figures, documentation, and other research materials supplied by INQUIRE Lab are offered under Creative Commons Attribution-NonCommercial 4.0 International in LICENSE-MATERIALS.txt. These licenses apply to their respective categories, rather than offering a choice of license for the same material. Archive contents follow the same distinction.
 
-2. Restrictions
-Without prior written permission from the INQUIRE Lab you may not (a) use the
-Software or any part of it for any commercial purpose, including internal use by a
-for-profit entity, consulting work, or the development of commercial products or
-services; (b) redistribute, publish, sublicense, sell, or host the Software or any
-substantial portion of it; (c) create or distribute derivative works, modified
-versions, or ports of the Software; or (d) use the Software to provide services to
-third parties.
+These grants cover only rights that INQUIRE Lab has authority to license. Material from other rights holders, including dependencies, datasets, model weights, and incorporated code, retains its original terms. Existing notices identifying separate terms must be preserved. No rights to such material are supplied by this notice.
 
-3. Attribution
-Any publication, presentation, or report describing results obtained with the
-Software must cite the associated INQUIRE Lab publication.
+Please cite the associated publication identified in the repository README or CITATION.cff when reporting research that uses these materials. Retain the attribution and notices required by the applicable license.
 
-4. Patent Rights
-No license, express or implied, is granted to any patent, patent application, or
-other intellectual property right of the INQUIRE Lab, the University of Oklahoma,
-or the authors. One or more patent applications covering methods implemented in
-this repository may be pending. Public release of the Software does not constitute
-a waiver, dedication to the public, or license of any such right.
+Copies previously obtained under another license retain the rights granted under that license. This notice does not revoke prior grants. Rights of the United States Government under applicable awards are preserved.
 
-5. Government Rights
-Portions of this work were developed with United States Government support. The
-Government retains the rights granted to it under the applicable award terms, and
-nothing in this license limits those rights.
-
-6. Termination
-This license terminates automatically upon any breach of its terms. Upon
-termination you must cease all use of the Software and destroy all copies in your
-possession.
-
-7. No Warranty
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
-FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS, THE
-INQUIRE LAB, OR THE UNIVERSITY OF OKLAHOMA BE LIABLE FOR ANY CLAIM, DAMAGES, OR
-OTHER LIABILITY ARISING FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE
-USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-8. Prior Versions
-Copies of this repository obtained under a previous license remain subject to that
-license for those copies only. This license governs this version of the Software
-and all subsequent versions.
-
-9. Contact
-Licensing and permission inquiries: INQUIRE Lab, School of Electrical and Computer
-Engineering, University of Oklahoma, Norman, Oklahoma.
+Commercial licensing inquiries may be directed to INQUIRE Lab, School of Electrical and Computer Engineering, University of Oklahoma.
